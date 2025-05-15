@@ -7,7 +7,6 @@ import (
 	"syscall"
 	"urlshortener"
 	"urlshortener/services"
-	"urlshortener/services/store"
 )
 
 func main() {
@@ -15,8 +14,10 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	grpcServerWrapper := services.NewGrpcWrapper(urlshortener.AppCfg.RetrieveServerAddr)
+	grpcServerWrapper := services.NewGrpcWrapper(urlshortener.AppCfg.ShortenServerAddr)
 	RegisterSvc(grpcServerWrapper.Server())
+
+	log.Println("Starting Shorten server on: ", urlshortener.AppCfg.ShortenServerAddr)
 
 	go func() {
 		if err := grpcServerWrapper.Run(); err != nil {
@@ -26,6 +27,5 @@ func main() {
 
 	<-quit
 
-	store.WriteFile(store.GetDataStoreInstance())
 	log.Println("Data saved. Exiting.")
 }

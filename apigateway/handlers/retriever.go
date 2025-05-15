@@ -16,7 +16,7 @@ func CallRetrieverSvc(c *gin.Context) {
 	shortUrl := c.Param("shortUrl")
 	req := pb.RetrieveUrlRq{ShortUrl: shortUrl}
 
-	grpcConn := NewGRPCClient(urlshortener.AppCfg.RetrieveServerAddr)
+	grpcConn := NewGRPCConn(urlshortener.AppCfg.RetrieveServerAddr)
 	defer grpcConn.Close()
 
 	client := pb.NewRetrieveServiceClient(grpcConn)
@@ -26,6 +26,7 @@ func CallRetrieverSvc(c *gin.Context) {
 	response, err := client.RetrieveUrl(ctx, &req)
 	if err != nil {
 		log.Fatalf("error calling urlshorten service: %v", err)
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 	}
 
 	log.Printf("Response from Retrieve server : %s", response.GetLongUrl())

@@ -2,18 +2,20 @@ package usecase
 
 import (
 	"fmt"
-	"time"
 	"urlshortener/services/store"
 )
 
 func UcShortener(longUrl string, userid string) string {
 
-	urlData := store.UrlData{LongUrl: longUrl, CreatedAt: fmt.Sprint(time.Now().UnixNano())}
+	// Check for existing entry
+	doc := store.FetchDocFromLongUrl(longUrl)
+	if doc != nil {
+		fmt.Println("Entry already exists")
+		return doc.ShortUrl
+	}
 
+	// doc is nil => it is a new entry
 	newShortUrl := RandGenerator(longUrl)
-	dataMap := store.GetDataStoreInstance().DataMap
-
-	dataMap[newShortUrl] = urlData
-
+	store.InsertDocument(newShortUrl, longUrl)
 	return newShortUrl
 }

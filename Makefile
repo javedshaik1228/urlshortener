@@ -14,7 +14,6 @@ run-shorten:
 run-retriever:
 	go run services/retriever/*.go
 
-
 gen:
 	@protoc \
 		--proto_path=proto "proto/shortenUrl.proto" \

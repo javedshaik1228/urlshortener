@@ -15,13 +15,11 @@ func init() {
 func main() {
 	router := gin.Default()
 
-	router.GET("/urlshorterner/:shortUrl", func(c *gin.Context) {
-		handlers.CallRetrieverSvc(c)
-	})
-
-	router.POST("/urlshorterner/shorten", func(c *gin.Context) {
-		handlers.CallShortenerSvc(c)
-	})
+	api := router.Group("/urlshorterner")
+	{
+		api.GET("/:shortUrl", handlers.CallRetrieverSvc)
+		api.POST("/shorten", handlers.CallShortenerSvc)
+	}
 
 	router.Run(urlshortener.AppCfg.GatewayServerAddr)
 }

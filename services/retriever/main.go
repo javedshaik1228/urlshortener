@@ -17,6 +17,8 @@ func main() {
 	grpcServerWrapper := services.NewGrpcWrapper(urlshortener.AppCfg.RetrieveServerAddr)
 	RegisterSvc(grpcServerWrapper.Server())
 
+	log.Println("Starting Retriever server on: ", urlshortener.AppCfg.RetrieveServerAddr)
+
 	go func() {
 		if err := grpcServerWrapper.Run(); err != nil {
 			log.Fatalf("gRPC server error: %v", err)
