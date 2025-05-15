@@ -1,0 +1,17 @@
+syntax = "proto3";
+package urlshortener;
+
+option go_package = "urlshortener/proto/genproto/shortenpb";
+
+service ShortenService {
+  rpc ShortenUrl(ShortenUrlRq) returns (ShortenUrlRs);
+}
+
+message ShortenUrlRq {
+  string longUrl = 1;
+  string userId = 2;
+}
+
+message ShortenUrlRs {
+  string shortUrl = 1;
+}

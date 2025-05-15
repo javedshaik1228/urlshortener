@@ -1,0 +1,16 @@
+syntax = "proto3";
+package urlshortener;
+
+option go_package = "urlshortener/proto/genproto/retrievepb";
+
+service RetrieveService {
+  rpc RetrieveUrl(RetrieveUrlRq) returns (RetrieveUrlRs);
+}
+
+message RetrieveUrlRq {
+  string shortUrl = 1;
+}
+
+message RetrieveUrlRs {
+  string longUrl = 1;
+}
