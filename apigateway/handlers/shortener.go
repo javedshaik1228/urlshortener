@@ -19,7 +19,12 @@ func CallShortenerSvc(c *gin.Context) {
 		return
 	}
 
-	grpcConn := NewGRPCConn(urlshortener.AppCfg.ShortenServerAddr)
+	grpcConn, err := NewGRPCConn(urlshortener.AppCfg.ShortenServerAddr)
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Failed to connect to Shorten service"})
+		return
+	}
+
 	defer grpcConn.Close()
 
 	client := pb.NewShortenServiceClient(grpcConn)

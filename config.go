@@ -22,13 +22,14 @@ type DbConfig struct {
 	Host       string
 }
 
-var AppCfg AppConfig
-var DbCfg DbConfig
-var DbCnxUri string
+var (
+	AppCfg   AppConfig
+	DbCfg    DbConfig
+	DbCnxUri string
+)
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatalf("unable to load .env file: %e", err)
 	}
 
@@ -46,9 +47,14 @@ func init() {
 		Host:       getEnvVar("HOST"),
 	}
 
-	DbCnxUri = "mongodb+srv://" + DbCfg.DbUser + ":" + DbCfg.DbPwd + "@" + DbCfg.Host + "/" + DbCfg.Database + "?retryWrites=true&w=majority"
-	fmt.Println("\nuri is: ", DbCnxUri)
+	DbCnxUri = constructDbUri(DbCfg)
+}
 
+func constructDbUri(cfg DbConfig) string {
+	return fmt.Sprintf(
+		"mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
+		cfg.DbUser, cfg.DbPwd, cfg.Host, cfg.Database,
+	)
 }
 
 func getEnvVar(key string) string {

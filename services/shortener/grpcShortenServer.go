@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"log"
 
 	pb "urlshortener/proto/genproto/shortenpb"
 	uc "urlshortener/services/shortener/usecase"
+	"urlshortener/services/store"
 
 	"google.golang.org/grpc"
 )
@@ -14,7 +16,14 @@ type ShortenServer struct {
 }
 
 func (s *ShortenServer) ShortenUrl(ctx context.Context, req *pb.ShortenUrlRq) (*pb.ShortenUrlRs, error) {
-	shortUrl := uc.UcShortener(req.GetLongUrl(), req.GetUserId())
+	// get nosql client instance
+	noSqlClient, err := store.GetNoSQLClient()
+	if err != nil {
+		log.Printf("Failed to get NoSQLClient: %v", err)
+		return nil, err
+	}
+
+	shortUrl := uc.UcShortener(noSqlClient, req.GetLongUrl(), req.GetUserId())
 	return &pb.ShortenUrlRs{ShortUrl: shortUrl}, nil
 }
 

@@ -7,11 +7,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewGRPCConn(addr string) *grpc.ClientConn {
+func NewGRPCConn(addr string) (*grpc.ClientConn, error) {
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Printf("Failed to connect to gRPC server at %s: %v", addr, err)
+		return nil, err
 	}
 
-	return conn
+	return conn, nil
 }

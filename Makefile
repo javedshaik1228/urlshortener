@@ -1,14 +1,11 @@
 SHELL := /bin/bash
 
-.PHONY: run-gateway run-shorten
-
-loadenv:
-	source .env
+.PHONY: run-gateway run-shorten run-retriever gen
 
 run-gateway:
 	go run apigateway/*.go
 
-run-shorten:
+run-shortener:
 	go run services/shortener/*.go
 
 run-retriever:

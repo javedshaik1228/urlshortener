@@ -13,10 +13,15 @@ import (
 )
 
 func CallRetrieverSvc(c *gin.Context) {
-	shortUrl := c.Param("shortUrl")
-	req := pb.RetrieveUrlRq{ShortUrl: shortUrl}
+	shortUrlParam := c.Param("shortUrl")
+	req := pb.RetrieveUrlRq{ShortUrl: shortUrlParam}
 
-	grpcConn := NewGRPCConn(urlshortener.AppCfg.RetrieveServerAddr)
+	grpcConn, err := NewGRPCConn(urlshortener.AppCfg.RetrieveServerAddr)
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Failed to connect to Retrieve service"})
+		return
+	}
+
 	defer grpcConn.Close()
 
 	client := pb.NewRetrieveServiceClient(grpcConn)
